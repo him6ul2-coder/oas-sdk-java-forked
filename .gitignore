@@ -1,0 +1,23 @@
+.vscode/settings.json
+.DS_Store
+
+# Generated code output directory (new structure)
+generated-code/
+
+# Legacy generated directories (to be removed)
+generated-sdks/
+output/
+
+# Maven build output
+target/
+logs/
+# IDE files
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# Log files
+*.log
+dependency-reduced-pom.xml

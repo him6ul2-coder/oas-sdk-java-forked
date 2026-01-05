@@ -1,0 +1,83 @@
+openapi: 3.0.0
+info:
+  title: Sample APIs
+  version: 4.0.0
+  license:
+    name: Test License is required
+  description: Sample Content Manager API for scheduling testing
+servers:
+  - url: https://api.example.com/knowledge/contentmgr/v4
+    description: Production Server
+paths:
+  /schedules:
+    get:
+      summary: Get schedules
+      description: Returns a list of schedules
+      operationId: getSchedules
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Schedule'
+    post:
+      summary: Create schedule
+      description: Creates a new schedule
+      operationId: createSchedule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Schedule'
+      responses:
+        '201':
+          description: Schedule created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schedule'
+  /schedules/{scheduleId}:
+    get:
+      summary: Get schedule by ID
+      description: Returns a single schedule
+      operationId: getScheduleById
+      parameters:
+        - name: scheduleId
+          in: path
+          description: Schedule ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schedule'
+        '404':
+          description: Schedule not found
+components:
+  schemas:
+    Schedule:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          description: Schedule ID
+        name:
+          type: string
+          description: Schedule name
+        cronExpression:
+          type: string
+          description: Cron expression for schedule
+        active:
+          type: boolean
+          description: Whether schedule is active

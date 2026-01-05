@@ -1,0 +1,53 @@
+# OAS SDK Java Configuration Example
+# This file demonstrates how to configure the OAS SDK for different scenarios
+
+# Generator configuration
+generator:
+  language: "java"
+  framework: "jersey"
+  package_name: "com.example.helloworld"
+  version: "1.0.0"
+  output_dir: "./generated"
+  custom_templates: false
+
+# Test configuration
+test:
+  unit_tests: true
+  integration_tests: true
+  nfr_tests: true
+  performance_tests: true
+  security_tests: true
+  scalability_tests: true
+  reliability_tests: true
+  compliance_tests: true
+  test_framework: "junit5"
+  mock_data: true
+  test_utilities: true
+
+# SLA configuration
+sla:
+  sla_file: "sla.yaml"
+  monitoring: true
+  alerting: true
+  compliance: ["gdpr", "iso27001"]
+  api_gateway: "aws"
+  monitoring_stack: ["prometheus", "grafana"]
+
+# Security configuration
+security:
+  rate_limiting: true
+  input_validation: true
+  injection_prevention: true
+  authentication: true
+  authorization: true
+  encryption: true
+
+# Performance configuration
+performance:
+  response_time_p95: "200ms"
+  response_time_p99: "500ms"
+  throughput_normal: 1000
+  throughput_peak: 2000
+  concurrent_users: 500
+  memory_limit: "512Mi"
+  cpu_limit: "500m"

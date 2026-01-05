@@ -1,0 +1,73 @@
+openapi: 3.0.0
+info:
+  title: Sample APIs
+  version: 4.0.0
+  license:
+    name: Test License is required
+  description: Sample Content Manager API for import testing
+servers:
+  - url: https://api.example.com/knowledge/contentmgr/v4
+    description: Production Server
+paths:
+  /imports:
+    post:
+      summary: Create import job
+      description: Creates a new import job
+      operationId: createImportJob
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportJob'
+      responses:
+        '201':
+          description: Import job created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportJob'
+  /imports/{jobId}:
+    get:
+      summary: Get import job status
+      description: Returns the status of an import job
+      operationId: getImportJobStatus
+      parameters:
+        - name: jobId
+          in: path
+          description: Job ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImportJob'
+        '404':
+          description: Job not found
+components:
+  schemas:
+    ImportJob:
+      type: object
+      required:
+        - id
+        - status
+      properties:
+        id:
+          type: string
+          description: Job ID
+        status:
+          type: string
+          enum: [pending, running, completed, failed]
+          description: Job status
+        sourceUrl:
+          type: string
+          format: uri
+          description: Source URL for import
+        createdDate:
+          type: string
+          format: date-time
+          description: Creation date

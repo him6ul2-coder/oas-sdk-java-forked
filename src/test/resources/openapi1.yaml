@@ -1,0 +1,76 @@
+openapi: 3.0.0
+info:
+  title: Sample APIs
+  version: 4.0.0
+  license:
+    name: Test License is required
+  description: Sample API for testing with various data types
+  contact:
+    name: API Support
+    email: support@example.com
+    url: https://api.example.com
+servers:
+  - url: https://api.example.com/knowledge/portalmgr/v4
+    description: Production Server
+paths:
+  /items:
+    get:
+      summary: Get items
+      description: Returns a list of items
+      operationId: getItems
+      parameters:
+        - name: status
+          in: query
+          description: Item status
+          required: false
+          schema:
+            type: string
+            enum: [active, inactive, pending]
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
+  /items/{itemId}:
+    get:
+      summary: Get item by ID
+      description: Returns a single item
+      operationId: getItemById
+      parameters:
+        - name: itemId
+          in: path
+          description: Item ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '404':
+          description: Item not found
+components:
+  schemas:
+    Item:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          description: Item ID
+        name:
+          type: string
+          description: Item name
+        status:
+          type: string
+          enum: [active, inactive, pending]
+          description: Item status

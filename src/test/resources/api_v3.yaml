@@ -1,0 +1,169 @@
+openapi: 3.0.0
+info:
+  title: Sample APIs
+  version: 3.0.0
+  license:
+    name: Test License is required
+  description: Sample API for testing with security features
+  contact:
+    name: API Support
+    email: support@example.com
+    url: https://api.example.com
+servers:
+  - url: https://api.example.com/knowledge/portalmgr/v3
+    description: Production Server
+    security:
+      - oAuthUser:
+          - knowledge.read
+      - oAuthCustomer:
+          - knowledge.read
+paths:
+  /articles:
+    get:
+      summary: Get articles
+      description: Returns a list of articles
+      operationId: getArticles
+      security:
+        - oAuthUser:
+            - knowledge.read
+        - oAuthCustomer:
+            - knowledge.read
+      parameters:
+        - name: query
+          in: query
+          description: Search query
+          required: false
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 100
+        - name: limit
+          in: query
+          description: Maximum number of articles
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  articles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Article'
+                  totalCount:
+                    type: integer
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+    post:
+      summary: Create article
+      description: Creates a new article
+      operationId: createArticle
+      security:
+        - oAuthUser:
+            - knowledge.write
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Article'
+      responses:
+        '201':
+          description: Article created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  /articles/{articleId}:
+    get:
+      summary: Get article by ID
+      description: Returns a single article
+      operationId: getArticleById
+      security:
+        - oAuthUser:
+            - knowledge.read
+        - oAuthCustomer:
+            - knowledge.read
+      parameters:
+        - name: articleId
+          in: path
+          description: Article ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        '404':
+          description: Article not found
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+components:
+  securitySchemes:
+    oAuthUser:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.example.com/oauth/authorize
+          tokenUrl: https://api.example.com/oauth/token
+          scopes:
+            knowledge.read: Read knowledge content
+            knowledge.write: Write knowledge content
+    oAuthCustomer:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://api.example.com/oauth/authorize
+          tokenUrl: https://api.example.com/oauth/token
+          scopes:
+            knowledge.read: Read knowledge content
+  schemas:
+    Article:
+      type: object
+      required:
+        - id
+        - title
+      properties:
+        id:
+          type: string
+          description: Article ID
+        title:
+          type: string
+          description: Article title
+          minLength: 1
+          maxLength: 200
+        content:
+          type: string
+          description: Article content
+        author:
+          type: string
+          description: Article author
+        createdDate:
+          type: string
+          format: date-time
+          description: Creation date
+        tags:
+          type: array
+          items:
+            type: string
+          description: Article tags

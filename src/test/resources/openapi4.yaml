@@ -1,0 +1,106 @@
+openapi: 3.0.0
+info:
+  title: Sample APIs
+  version: 4.0.0
+  license:
+    name: Test License is required
+  description: Sample Content Manager API for validation testing
+servers:
+  - url: https://api.example.com/knowledge/contentmgr/v4
+    description: Production Server
+paths:
+  /validate:
+    post:
+      summary: Validate content
+      description: Validates content before import
+      operationId: validateContent
+      parameters:
+        - name: strictMode
+          in: query
+          description: Enable strict validation mode
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: maxErrors
+          in: query
+          description: Maximum number of errors to return
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidationRequest'
+      responses:
+        '200':
+          description: Validation results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResult'
+  /content/{contentId}:
+    get:
+      summary: Get content by ID
+      description: Returns content details
+      operationId: getContentById
+      parameters:
+        - name: contentId
+          in: path
+          description: Content ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Content'
+        '404':
+          description: Content not found
+components:
+  schemas:
+    ValidationRequest:
+      type: object
+      required:
+        - content
+      properties:
+        content:
+          type: string
+          description: Content to validate
+        type:
+          type: string
+          description: Content type
+    ValidationResult:
+      type: object
+      properties:
+        valid:
+          type: boolean
+          description: Whether content is valid
+        errors:
+          type: array
+          items:
+            type: string
+          description: Validation errors
+    Content:
+      type: object
+      required:
+        - id
+        - data
+      properties:
+        id:
+          type: string
+          description: Content ID
+        data:
+          type: string
+          description: Content data
+        type:
+          type: string
+          description: Content type

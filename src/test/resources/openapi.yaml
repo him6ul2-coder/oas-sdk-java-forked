@@ -1,0 +1,356 @@
+openapi: 3.0.0
+info:
+  title: Sample APIs
+  version: 1.0.0
+  license:
+    name: Test License is required
+  description: A simple API for testing
+servers:
+  - url: http://localhost:8080
+    description: Development server
+paths:
+  /hello:
+    get:
+      summary: Get hello message
+      description: Returns a hello world message
+      operationId: getHello
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Hello World
+  /users:
+    get:
+      summary: Get all users
+      description: Returns a list of users
+      operationId: getUsers
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of users to return
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      summary: Create a user
+      description: Creates a new user
+      operationId: createUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /users/{userId}:
+    get:
+      summary: Get user by ID
+      description: Returns a single user
+      operationId: getUserById
+      parameters:
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+    put:
+      summary: Update user
+      description: Updates an existing user
+      operationId: updateUser
+      parameters:
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: User updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+    delete:
+      summary: Delete user
+      description: Deletes a user
+      operationId: deleteUser
+      parameters:
+        - name: userId
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: User deleted
+        '404':
+          description: User not found
+  /products:
+    get:
+      summary: Get all products
+      description: Returns a list of products
+      operationId: getProducts
+      parameters:
+        - name: category
+          in: query
+          description: Product category
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+    post:
+      summary: Create a product
+      description: Creates a new product
+      operationId: createProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Product created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+  /products/{productId}:
+    get:
+      summary: Get product by ID
+      description: Returns a single product
+      operationId: getProductById
+      parameters:
+        - name: productId
+          in: path
+          description: Product ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+  /orders:
+    get:
+      summary: Get all orders
+      description: Returns a list of orders
+      operationId: getOrders
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+    post:
+      summary: Create an order
+      description: Creates a new order
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '201':
+          description: Order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+  /orders/{orderId}:
+    get:
+      summary: Get order by ID
+      description: Returns a single order
+      operationId: getOrderById
+      parameters:
+        - name: orderId
+          in: path
+          description: Order ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: Order not found
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          description: User ID
+        name:
+          type: string
+          description: User name
+          minLength: 1
+          maxLength: 100
+        email:
+          type: string
+          format: email
+          description: User email
+    Product:
+      type: object
+      required:
+        - id
+        - name
+        - price
+      properties:
+        id:
+          type: string
+          description: Product ID
+        name:
+          type: string
+          description: Product name
+          minLength: 1
+          maxLength: 200
+        price:
+          type: number
+          format: double
+          description: Product price
+          minimum: 0
+        category:
+          type: string
+          description: Product category
+    Order:
+      type: object
+      required:
+        - id
+        - userId
+        - items
+      properties:
+        id:
+          type: string
+          description: Order ID
+        userId:
+          type: string
+          description: User ID
+        items:
+          type: array
+          items:
+            type: string
+          description: Product IDs
+        totalAmount:
+          type: number
+          format: double
+          description: Total order amount
+        status:
+          type: string
+          enum: [pending, processing, shipped, delivered, cancelled, completed, returned, refunded]
+          description: Order status
+        createdDate:
+          type: string
+          format: date-time
+          description: Creation date
+        priority:
+          type: string
+          enum: [low, normal, high, urgent, critical]
+          description: Order priority
+        shippingMethod:
+          type: string
+          enum: [standard, express, overnight, international, pickup]
+          description: Shipping method
+    Address:
+      type: object
+      required:
+        - street
+        - city
+        - country
+      properties:
+        street:
+          type: string
+          description: Street address
+        city:
+          type: string
+          description: City
+        state:
+          type: string
+          description: State or province
+        country:
+          type: string
+          description: Country
+        postalCode:
+          type: string
+          description: Postal code
+    PaymentMethod:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [credit_card, debit_card, paypal, bank_transfer, cash, crypto]
+          description: Payment method type
+        provider:
+          type: string
+          enum: [visa, mastercard, amex, discover, paypal, stripe]
+          description: Payment provider

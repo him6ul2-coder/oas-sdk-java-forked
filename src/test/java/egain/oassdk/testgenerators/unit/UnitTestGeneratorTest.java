@@ -1,0 +1,173 @@
+package egain.oassdk.testgenerators.unit;
+
+import egain.oassdk.config.TestConfig;
+import egain.oassdk.core.exceptions.GenerationException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Comprehensive test class for UnitTestGenerator
+ */
+public class UnitTestGeneratorTest {
+    
+    private UnitTestGenerator generator;
+    private Map<String, Object> spec;
+    private TestConfig testConfig;
+    
+    @BeforeEach
+    public void setUp() {
+        generator = new UnitTestGenerator();
+        spec = createValidOpenAPISpec();
+        testConfig = new TestConfig();
+    }
+    
+    @Test
+    public void testGeneratorInitialization() {
+        assertNotNull(generator);
+    }
+    
+    @Test
+    public void testGetName() {
+        assertEquals("Unit Test Generator", generator.getName());
+    }
+    
+    @Test
+    public void testGetVersion() {
+        assertEquals("1.0.0", generator.getVersion());
+    }
+    
+    @Test
+    public void testGetTestType() {
+        assertEquals("unit", generator.getTestType());
+    }
+    
+    @Test
+    public void testGenerate_Success(@TempDir Path tempDir) throws GenerationException {
+        // Arrange
+        testConfig.setTestFramework("junit5");
+        
+        // Act
+        generator.generate(spec, tempDir.toString(), testConfig, "junit5");
+        
+        // Assert
+        // Check that unit test directory was created
+        Path unitDir = tempDir.resolve("unit");
+        assertTrue(Files.exists(unitDir));
+    }
+    
+    @Test
+    public void testGenerate_WithEmptySpec(@TempDir Path tempDir) throws GenerationException {
+        // Arrange
+        Map<String, Object> emptySpec = new HashMap<>();
+        emptySpec.put("openapi", "3.0.0");
+        emptySpec.put("info", Map.of("title", "Test", "version", "1.0.0"));
+        emptySpec.put("paths", Map.of());
+        
+        // Act
+        generator.generate(emptySpec, tempDir.toString(), testConfig, "junit5");
+        
+        // Assert
+        // Should not throw exception even with empty paths
+        assertTrue(Files.exists(tempDir.resolve("unit")));
+    }
+    
+    @Test
+    public void testGenerate_WithPaths(@TempDir Path tempDir) throws GenerationException {
+        // Arrange
+        Map<String, Object> specWithPaths = new HashMap<>(spec);
+        Map<String, Object> paths = new HashMap<>();
+        Map<String, Object> pathItem = new HashMap<>();
+        Map<String, Object> get = new HashMap<>();
+        get.put("operationId", "getUsers");
+        get.put("tags", java.util.List.of("users"));
+        get.put("responses", Map.of("200", Map.of("description", "OK")));
+        pathItem.put("get", get);
+        paths.put("/users", pathItem);
+        specWithPaths.put("paths", paths);
+        
+        // Act
+        generator.generate(specWithPaths, tempDir.toString(), testConfig, "junit5");
+        
+        // Assert
+        assertTrue(Files.exists(tempDir.resolve("unit")));
+    }
+    
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testGenerate_WithParameters(@TempDir Path tempDir) throws GenerationException {
+        // Arrange
+        Map<String, Object> specWithParams = new HashMap<>(spec);
+        Map<String, Object> paths = (Map<String, Object>) specWithParams.get("paths");
+        Map<String, Object> pathItem = (Map<String, Object>) paths.get("/test");
+        Map<String, Object> get = (Map<String, Object>) pathItem.get("get");
+        get.put("parameters", java.util.List.of(
+            Map.of("name", "id", "in", "query", "required", true, 
+                   "schema", Map.of("type", "string", "pattern", "^[0-9]+$"))
+        ));
+        specWithParams.put("paths", paths);
+        
+        // Act
+        generator.generate(specWithParams, tempDir.toString(), testConfig, "junit5");
+        
+        // Assert
+        assertTrue(Files.exists(tempDir.resolve("unit")));
+    }
+    
+    @Test
+    public void testSetConfig() {
+        // Arrange
+        TestConfig config = new TestConfig();
+        config.setTestFramework("junit5");
+        
+        // Act
+        generator.setConfig(config);
+        
+        // Assert
+        assertEquals(config, generator.getConfig());
+    }
+    
+    @Test
+    public void testGenerate_WithCustomPackageName(@TempDir Path tempDir) throws GenerationException {
+        // Arrange
+        Map<String, Object> additionalProps = new HashMap<>();
+        additionalProps.put("packageName", "com.custom.package");
+        testConfig.setAdditionalProperties(additionalProps);
+        
+        // Act
+        generator.generate(spec, tempDir.toString(), testConfig, "junit5");
+        
+        // Assert
+        assertTrue(Files.exists(tempDir.resolve("unit")));
+    }
+    
+    /**
+     * Helper method to create a valid OpenAPI specification
+     */
+    private Map<String, Object> createValidOpenAPISpec() {
+        Map<String, Object> spec = new HashMap<>();
+        spec.put("openapi", "3.0.0");
+        spec.put("info", Map.of("title", "Test API", "version", "1.0.0", "description", "Test API Description"));
+        
+        Map<String, Object> paths = new HashMap<>();
+        Map<String, Object> pathItem = new HashMap<>();
+        Map<String, Object> get = new HashMap<>();
+        get.put("operationId", "getTest");
+        get.put("summary", "Get test data");
+        get.put("tags", java.util.List.of("test"));
+        get.put("responses", Map.of("200", Map.of("description", "OK")));
+        pathItem.put("get", get);
+        paths.put("/test", pathItem);
+        spec.put("paths", paths);
+        
+        return spec;
+    }
+}
+

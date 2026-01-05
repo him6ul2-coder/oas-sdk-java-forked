@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SpotBugs exclude filter to exclude JDK classes and avoid Java version compatibility issues.
+  This prevents SpotBugs from trying to analyze JDK classes which may be compiled with
+  newer Java versions (e.g., Java 25) that SpotBugs doesn't support.
+-->
+<FindBugsFilter>
+    <!-- Exclude all classes in java.* packages -->
+    <Match>
+        <Package name="~java\.~"/>
+    </Match>
+    
+    <!-- Exclude all classes in javax.* packages -->
+    <Match>
+        <Package name="~javax\.~"/>
+    </Match>
+    
+    <!-- Exclude all classes in jdk.* packages -->
+    <Match>
+        <Package name="~jdk\.~"/>
+    </Match>
+    
+    <!-- Exclude all classes in sun.* packages -->
+    <Match>
+        <Package name="~sun\.~"/>
+    </Match>
+    
+    <!-- Exclude all classes in com.sun.* packages -->
+    <Match>
+        <Package name="~com\.sun\.~"/>
+    </Match>
+    
+    <!-- Exclude all classes in org.omg.* packages (CORBA) -->
+    <Match>
+        <Package name="~org\.omg\.~"/>
+    </Match>
+</FindBugsFilter>
+

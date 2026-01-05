@@ -1,0 +1,92 @@
+openapi: 3.0.0
+info:
+  title: Sample APIs
+  version: 4.0.0
+  license:
+    name: Test License is required
+  description: Sample Template API for testing
+servers:
+  - url: https://api.example.com/knowledge/contentmgr/v4
+    description: Production Server
+paths:
+  /templates:
+    get:
+      summary: Get templates
+      description: Returns a list of templates
+      operationId: getTemplates
+      parameters:
+        - name: type
+          in: query
+          description: Template type
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Template'
+    post:
+      summary: Create template
+      description: Creates a new template
+      operationId: createTemplate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Template'
+      responses:
+        '201':
+          description: Template created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Template'
+  /templates/{templateId}:
+    get:
+      summary: Get template by ID
+      description: Returns a single template
+      operationId: getTemplateById
+      parameters:
+        - name: templateId
+          in: path
+          description: Template ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Template'
+        '404':
+          description: Template not found
+components:
+  schemas:
+    Template:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          description: Template ID
+        name:
+          type: string
+          description: Template name
+          minLength: 1
+          maxLength: 100
+        content:
+          type: string
+          description: Template content
+        type:
+          type: string
+          description: Template type

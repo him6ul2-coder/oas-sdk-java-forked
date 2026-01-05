@@ -1,0 +1,67 @@
+openapi: 3.0.0
+info:
+  title: Sample APIs
+  version: 4.0.0
+  license:
+    name: Test License is required
+  description: Sample Portal Manager API for testing
+  contact:
+    name: API Support
+    email: support@example.com
+    url: https://api.example.com
+servers:
+  - url: https://api.example.com/knowledge/portalmgr/v4
+    description: Production Server
+paths:
+  /portals:
+    get:
+      summary: Get portals
+      description: Returns a list of portals
+      operationId: getPortals
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Portal'
+  /portals/{portalId}:
+    get:
+      summary: Get portal by ID
+      description: Returns a single portal
+      operationId: getPortalById
+      parameters:
+        - name: portalId
+          in: path
+          description: Portal ID
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Portal'
+        '404':
+          description: Portal not found
+components:
+  schemas:
+    Portal:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          description: Portal ID
+        name:
+          type: string
+          description: Portal name
+        description:
+          type: string
+          description: Portal description
