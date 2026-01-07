@@ -576,8 +576,8 @@
         </profile>
     </profiles>
     <scm>
-        <url>https://github.com/egain/oas-sdk-java</url>
-        <connection>scm:git:https://github.com/egain/oas-sdk-java.git</connection>
+        <url>https://github.com/eGain/oas-sdk-java</url>
+        <connection>scm:git:https://github.com/eGain/oas-sdk-java.git</connection>
         <developerConnection>scm:git:git@github.com:egain/oas-sdk-java.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
